@@ -32,3 +32,5 @@ suffix: suffix for generating address
 5229343943791775475
 0x123Bc50381F5F6a0D4931C614FE5b38978ed5abc
 ```
+
+5. call deploy function in Deployer contract.
