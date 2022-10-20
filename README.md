@@ -15,8 +15,11 @@ go bulid main.go
 ```
 
 address: Factory contract Deployer's address
+
 init byte code: contract's init code
+
 prefix: prefix for generating address
+
 suffix: suffix for generating address
 
 ## example
