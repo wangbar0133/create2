@@ -1,6 +1,8 @@
 # CREATE2
 
-A create2 salt generator that gets a specific address.
+A create2 salt generator that gets a specific contract address.
+
+Support eoa generat now!
 
 ## compile
 
@@ -22,7 +24,11 @@ prefix: prefix for generating address
 
 suffix: suffix for generating address
 
+If you want to get eoa, just use p and s.
+
 ## example
+
+### contract address
 
 1. Changing the Test contract.
 2. Deploy Factory contract Deployer, this code is in deployer.sol.
@@ -37,3 +43,13 @@ suffix: suffix for generating address
 ```
 
 5. call deploy function in Deployer contract.
+
+
+### Eoa
+
+```shell
+./main -p 00 -s 00  
+[+] Start!
+0x004c34650E5E8BdC92B53f0af9E11C68bD171600
+0x04c20981e5e6c8fcdc51c70f7d369ca22ef5a0ba096c05c3c6cf9f22b71b8896
+```
