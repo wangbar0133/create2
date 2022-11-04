@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/ecdsa"
 	"fmt"
 	"math/rand"
 	"testing"
@@ -22,5 +23,12 @@ func TestCreate2(t *testing.T) {
 	fmt.Println(address)
 }
 
+func TestEoa(t *testing.T) {
+	privateKey, _ := crypto.GenerateKey()
+	publicKey := privateKey.Public()
+	publicKeyECDSA, _ := publicKey.(*ecdsa.PublicKey)
+	address := crypto.PubkeyToAddress(*publicKeyECDSA).String()
+	fmt.Println(address)
+}
 
 
