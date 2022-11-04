@@ -16,7 +16,7 @@ contract Deployer {
         assembly {
             addr := create2(0, add(bytecode, 0x20), mload(bytecode), _salt)
         }
-        return addr
+        return addr;
   }
 }
 
