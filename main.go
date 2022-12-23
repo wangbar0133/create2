@@ -4,13 +4,14 @@ import (
 	"crypto/ecdsa"
 	"flag"
 	"fmt"
-	"math/rand"
-	"strings"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/holiman/uint256"
+	"github.com/panjf2000/ants/v2"
+	"math/rand"
+	"strings"
+	"sync"
 )
 
 func getAddress(devContractAddress common.Address, initCodeHash []byte, p string, s string) {
@@ -38,15 +39,15 @@ func getAddressEoa(p string, s string) {
 			privateKeyBytes := crypto.FromECDSA(privateKey)
 			fmt.Println(hexutil.Encode(privateKeyBytes))
 			fmt.Println()
-	}
+		}
 	}
 }
 
 var (
-	address = flag.String("a", "", "dev contract address")
+	address  = flag.String("a", "", "dev contract address")
 	byteCode = flag.String("i", "", "init byte code")
-	prefix = flag.String("p", "", "prefix of address")
-	suffix = flag.String("s", "", "suffix of address")
+	prefix   = flag.String("p", "", "prefix of address")
+	suffix   = flag.String("s", "", "suffix of address")
 )
 
 func main() {
@@ -56,19 +57,46 @@ func main() {
 	fmt.Println("[+] Start!")
 
 	if *address == "" {
-		go getAddressEoa(p, s)
-		go getAddressEoa(p, s)
-		go getAddressEoa(p, s)
-		go getAddressEoa(p, s)
-		getAddressEoa(p, s)
+		fmt.Printf("[+] Generate EOA address with prefix %s and suffix %s\n", p, s)
+		defer ants.Release()
+
+		runTimes := 1000
+
+		// Use the common pool.
+		var wg sync.WaitGroup
+		syncCalculateSum := func() {
+			getAddressEoa(p, s)
+			wg.Done()
+		}
+		for i := 0; i < runTimes; i++ {
+			wg.Add(1)
+			_ = ants.Submit(syncCalculateSum)
+		}
+		wg.Wait()
+		fmt.Printf("running goroutines: %d\n", ants.Running())
+		fmt.Printf("finish all tasks.\n")
 	} else {
+		fmt.Printf("[+] Generate contract address with prefix %s and suffix %s\n", p, s)
 		devContractAddress := common.BytesToAddress(common.FromHex(*address))
 		initByteCode := common.FromHex(*byteCode)
 		initCodeHash := crypto.Keccak256(initByteCode)
-		go getAddress(devContractAddress, initCodeHash, p ,s)
-		go getAddress(devContractAddress, initCodeHash, p ,s)
-		go getAddress(devContractAddress, initCodeHash, p ,s)
-		go getAddress(devContractAddress, initCodeHash, p ,s)
-		getAddress(devContractAddress, initCodeHash, p ,s)
+
+		defer ants.Release()
+
+		runTimes := 1000
+
+		// Use the common pool.
+		var wg sync.WaitGroup
+		syncCalculateSum := func() {
+			getAddress(devContractAddress, initCodeHash, p, s)
+			wg.Done()
+		}
+		for i := 0; i < runTimes; i++ {
+			wg.Add(1)
+			_ = ants.Submit(syncCalculateSum)
+		}
+		wg.Wait()
+		fmt.Printf("running goroutines: %d\n", ants.Running())
+		fmt.Printf("finish all tasks.\n")
 	}
 }
