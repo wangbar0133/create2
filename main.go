@@ -48,6 +48,7 @@ var (
 	byteCode = flag.String("i", "", "init byte code")
 	prefix   = flag.String("p", "", "prefix of address")
 	suffix   = flag.String("s", "", "suffix of address")
+	goNum    = flag.Int("n", 1000, "goroutine number")
 )
 
 func main() {
@@ -58,9 +59,10 @@ func main() {
 
 	if *address == "" {
 		fmt.Printf("[+] Generate EOA address with prefix %s and suffix %s\n", p, s)
+		fmt.Printf("[+] Generate goroutine Num: %d \n", *goNum)
 		defer ants.Release()
 
-		runTimes := 1000
+		runTimes := *goNum
 
 		// Use the common pool.
 		var wg sync.WaitGroup
@@ -77,13 +79,14 @@ func main() {
 		fmt.Printf("finish all tasks.\n")
 	} else {
 		fmt.Printf("[+] Generate contract address with prefix %s and suffix %s\n", p, s)
+		fmt.Printf("[+] Generate goroutine Num: %d \n", *goNum)
 		devContractAddress := common.BytesToAddress(common.FromHex(*address))
 		initByteCode := common.FromHex(*byteCode)
 		initCodeHash := crypto.Keccak256(initByteCode)
 
 		defer ants.Release()
 
-		runTimes := 1000
+		runTimes := *goNum
 
 		// Use the common pool.
 		var wg sync.WaitGroup
