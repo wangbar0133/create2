@@ -10,9 +10,12 @@ import (
 	"github.com/holiman/uint256"
 	"github.com/panjf2000/ants/v2"
 	"math/rand"
+	"os"
 	"strings"
 	"sync"
 )
+
+const ResultFile = "result.txt"
 
 func getAddress(devContractAddress common.Address, initCodeHash []byte, p string, s string) {
 	for {
@@ -24,6 +27,18 @@ func getAddress(devContractAddress common.Address, initCodeHash []byte, p string
 			fmt.Println(i)
 			fmt.Println(address)
 			fmt.Println()
+
+			f, err := os.OpenFile(ResultFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			defer f.Close()
+			_, err = fmt.Fprintf(f, "i: %d ; address: %s\n", i, address)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 		}
 	}
 }
@@ -39,6 +54,18 @@ func getAddressEoa(p string, s string) {
 			privateKeyBytes := crypto.FromECDSA(privateKey)
 			fmt.Println(hexutil.Encode(privateKeyBytes))
 			fmt.Println()
+			f, err := os.OpenFile(ResultFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			defer f.Close()
+			_, err = fmt.Fprintf(f, "address: %s ; privateKey: %s\n", address, hexutil.Encode(privateKeyBytes))
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
 		}
 	}
 }
