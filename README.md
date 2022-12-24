@@ -16,7 +16,7 @@ go bulid main.go
 ./main -a <address> -i <init byte code> -p <prefix> -s <suffix> -n 100000
 ```
 
-address: Factory contract Deployer's address
+address: Factory contract's address
 
 init byte code: contract's init code
 
